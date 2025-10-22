@@ -264,7 +264,7 @@
                         <p>Estamos aguardando sua mensagem — à sua disposição para ajudar no que for preciso.</p>
                     </div>
 
-                    <form name="contact" method="POST" data-netlify="true" class="contact-form">
+                    <form name="contact" method="POST" data-netlify="true" class="contact-form" id="contactForm">
                         <!-- input hidden para o Netlify identificar -->
                         <input type="hidden" name="form-name" value="contact">
 
@@ -294,7 +294,11 @@
                         </div>
 
                         <button type="submit" class="btn-submit">Enviar Mensagem</button>
+
+                        <!-- Aqui vai aparecer a mensagem de feedback -->
+                        <p id="formFeedback" style="margin-top: 15px; color: #ffd400; display: none;"></p>
                     </form>
+
 
                 </div>
             </section>            
@@ -352,5 +356,33 @@
         <script src="static/scroll.js"></script>
         <script src="static/inicio.js"></script>
         <script src="static/carousel.js"></script>
+        <script>
+            const form = document.getElementById("contactForm");
+            const feedback = document.getElementById("formFeedback");
+
+            form.addEventListener("submit", function(event) {
+                event.preventDefault(); // previne envio normal
+
+                const formData = new FormData(form);
+
+                fetch("/", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                    body: new URLSearchParams(formData).toString()
+                })
+                .then(() => {
+                    feedback.style.display = "block";
+                    feedback.style.color = "#00ff88"; // verde sucesso
+                    feedback.textContent = "Mensagem enviada com sucesso! Obrigado.";
+                    form.reset();
+                })
+                .catch((error) => {
+                    feedback.style.display = "block";
+                    feedback.style.color = "#ff4444"; // vermelho erro
+                    feedback.textContent = "Ocorreu um erro ao enviar. Tente novamente.";
+                    console.error("Form submission error:", error);
+                });
+            });
+        </script>
     </body>
 </html> 
